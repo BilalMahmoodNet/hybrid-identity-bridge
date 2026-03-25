@@ -1,0 +1,9 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+*.tfvars
+*.tfvars.json
+.env
+*.lic
+.DS_Store
