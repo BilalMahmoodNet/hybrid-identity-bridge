@@ -3,45 +3,35 @@ name: "IAM Phase 1: Zero-Mapping CI"
 on: [push, pull_request]
 
 jobs:
-  terraform-ci:
+  terraform-plan:
     runs-on: ubuntu-latest
-    environment: dev
+    # 1. CRITICAL: Match this to your GitHub Environment Name (e.g., 'dev' or 'prod')
+    environment: dev 
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Inject and Debug
+      - name: Inject Secrets to TFVARS
+        # 2. We use 'env' to make them available to the shell script
+        env:
+          P1_ID: ${{ secrets.PINGONE_CLIENT_ID }}
+          P1_SECRET: ${{ secrets.PINGONE_CLIENT_SECRET }}
+          P1_ENV: ${{ secrets.PINGONE_ENVIRONMENT_ID }}
+          PF_PASS: ${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}
+          CC_SECRET: ${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}
         run: |
-          echo '{
-            "pingone_client_id": "${{ secrets.PINGONE_CLIENT_ID }}",
-            "pingone_client_secret": "${{ secrets.PINGONE_CLIENT_SECRET }}",
-            "pingone_environment_id": "${{ secrets.PINGONE_ENVIRONMENT_ID }}",
-            "pingfederate_admin_password": "${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}",
-            "client_credentials_client_secret": "${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}",
-            "pf_base_url": "https://localhost:9999"
-          }' > terraform.tfvars.json
-          echo "Listing files to confirm location:"
-          ls -al
-          echo "Checking if JSON is valid (should show keys):"
-          jq 'keys' terraform.tfvars.json
-
-      - name: Terraform Init
-        run: terraform init -input=false
-
-      - name: Terraform Validate
-        run: terraform validate
+          echo "{
+            \"pingone_client_id\": \"$P1_ID\",
+            \"pingone_client_secret\": \"$P1_SECRET\",
+            \"pingone_environment_id\": \"$P1_ENV\",
+            \"pingfederate_admin_password\": \"$PF_PASS\",
+            \"client_credentials_client_secret\": \"$CC_SECRET\",
+            \"pf_base_url\": \"https://localhost:9999\"
+          }" > terraform.tfvars.json
 
       - name: Terraform Plan
+        # 3. Force the Region via Environment Variable (The SDK bypass)
         env:
-          # This is the "Magic Bullet" for the PingOne Provider in CI/CD
-          # It bypasses the HCL validation and feeds the SDK directly
-          PINGONE_REGION_CODE: "EU" 
-          TF_VAR_pingone_region_code: "EU"
-        run: |
-          terraform plan \
-            -var-file="terraform.tfvars.json" \
-            -refresh=false \
-            -input=false
+          PINGONE_REGION_CODE: "EU"
+        run: terraform plan -var-file="terraform.tfvars.json" -refresh=false -input=false
