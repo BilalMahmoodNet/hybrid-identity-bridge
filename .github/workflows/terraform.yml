@@ -12,6 +12,16 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Verify Secrets Exist
+        shell: bash
+        run: |
+          if [ -z "${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}" ]; then
+            echo "❌ ERROR: CLIENT_CREDENTIALS_CLIENT_SECRET is MISSING in GitHub Secrets UI"
+            exit 1
+          else
+            echo "✅ SUCCESS: Secret is present in GitHub"
+          fi
+
       - name: Inject Secrets to TFVARS
         run: |
           echo '{
