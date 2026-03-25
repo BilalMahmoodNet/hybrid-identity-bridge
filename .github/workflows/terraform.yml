@@ -34,5 +34,5 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        # No need to pass -var or env vars; it finds the JSON file
-        run: terraform plan -refresh=false -input=false
+        # We explicitly tell Terraform to use the file we just verified with JQ
+        run: terraform plan -var-file="terraform.tfvars.json" -refresh=false -input=false
