@@ -6,7 +6,7 @@ jobs:
   terraform-plan:
     runs-on: ubuntu-latest
     # 1. CRITICAL: This MUST match the name in Settings > Environments
-    environment: dev 
+    environment: DEV 
 
     steps:
       - name: Checkout Code
