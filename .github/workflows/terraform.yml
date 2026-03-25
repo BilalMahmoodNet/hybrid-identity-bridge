@@ -19,7 +19,7 @@ jobs:
             "pingone_client_secret": "${{ secrets.PINGONE_CLIENT_SECRET }}",
             "pingone_environment_id": "${{ secrets.PINGONE_ENVIRONMENT_ID }}",
             "pingfederate_admin_password": "${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}",
-            "client_credentials_client_secret": "${{ secrets.PINGONE_CLIENT_SECRET }}",
+            "client_credentials_client_secret": "${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}",
             "pf_base_url": "https://localhost:9999"
           }' > terraform.tfvars.json
 
