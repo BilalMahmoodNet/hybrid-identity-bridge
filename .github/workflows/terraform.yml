@@ -29,14 +29,16 @@ jobs:
           PF_PASS: ${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}
           CC_SECRET: ${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}
         run: |
-          echo "{
-            \"pingone_client_id\": \"$P1_ID\",
-            \"pingone_client_secret\": \"$P1_SECRET\",
-            \"pingone_environment_id\": \"$P1_ENV\",
-            \"pingfederate_admin_password\": \"$PF_PASS\",
-            \"client_credentials_client_secret\": \"$CC_SECRET\",
-            \"pf_base_url\": \"https://localhost:9999\"
-          }" > terraform.tfvars.json
+          cat <<EOF > terraform.tfvars.json
+          {
+            "pingone_client_id": "$P1_ID",
+            "pingone_client_secret": "$P1_SECRET",
+            "pingone_environment_id": "$P1_ENV",
+            "pingfederate_admin_password": "$PF_PASS",
+            "client_credentials_client_secret": "$CC_SECRET",
+            "pf_base_url": "https://localhost:9999"
+          }
+          EOF
 
       - name: Terraform Plan
         # 3. Force the Region SDK bypass
