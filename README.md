@@ -1,21 +1,25 @@
 ## 🛠️ Project Roadmap: The Migration Lifecycle
 
-### ✅ Phase 1: The Hybrid Bridge (Completed)
-*Focused on Co-existence and Governance during the transition period.*
+## 🤖 CI/CD & Automated Governance
+This framework is integrated with **GitHub Actions** to ensure that every Identity change is validated, linted, and scanned before it reaches the environment.
 
-* **Converged State Management:** Simultaneous orchestration of On-Prem (Dockerized PingFederate) and SaaS (PingOne) environments.
-* **Identity Vending Factory:** Implemented `for_each` logic to scale from single-app scripts to an Enterprise-grade "Vending Machine."
-* **Policy-as-Code (Governance):** Built-in HCL validation for strict naming conventions (`uk-*` prefix) and security guardrails (minimum secret entropy).
-* **Metadata Traceability:** Linked cloud groups to legacy on-prem clients using `custom_data` blocks for 100% migration auditability.
-* **Modular Architecture:** Abstracted complex IAM logic into a reusable `/modules/iam-vending-machine` directory.
+* **Static Analysis (SAST):** Automated `terraform validate` and `fmt` checks on every Pull Request to ensure HCL compliance.
+* **Security Shift-Left:** (Roadmap) Integration with `tfsec` or `Checkov` to detect over-privileged IAM roles or exposed secrets before deployment.
+* **Plan Transparency:** Automated generation of `terraform plan` output in PR comments, providing a clear audit trail for Identity Admins.
+
+---
+
+### ✅ Phase 1: The Hybrid Bridge (Completed)
+* **Infrastructure as Code (IaC):** Orchestrated dual-provider states (PingFederate & PingOne).
+* **Identity Vending Factory:** Leveraged `for_each` and dynamic blocks for scalable provisioning.
+* **Policy-as-Code:** Implemented variable validation for UK naming standards and secret entropy.
+* **CI/CD Foundation:** Established **GitHub Actions** workflows for automated code quality and validation.
 
 ### 🚀 Phase 2: The Migration Cutover (In Progress)
-*Focusing on decommissioning legacy infrastructure and shifting the "Point of Truth" to the Cloud.*
+* **Boolean Cutover Logic:** `is_migrated` flag to trigger automated decommissioning and cloud-native re-provisioning.
+* **Secret Management:** Integration with **HashiCorp Vault** or AWS Secrets Manager for zero-touch credential injection.
+* **Self-Hosted Runners:** Configuring GitHub Runners within the private network to reach on-premises Dockerized PingFederate APIs safely.
 
-* **Boolean Migration Logic:** Implementation of an `is_migrated` flag to automate the "Decommission On-Prem / Provision Cloud" cutover.
-* **Dynamic Secret Orchestration:** Moving from static variable inputs to automated, zero-touch secret generation using the HashiCorp `random` provider.
-* **Role & Population Sync:** Automating the assignment of `Identity Data Admin` roles and population mapping during the cutover phase.
-* **CI/CD Integration:** Moving the local state to a Remote Backend (S3/Terraform Cloud) for collaborative migration workflows.
 
 ---
 

@@ -1,0 +1,38 @@
+name: "IAM Phase 1: Bridge Governance"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  governance:
+    name: "Static Analysis & Policy Check"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: HashiCorp - Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        # Verification: Ensures the team follows the same style guide.
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        # Architect Note: '-backend=false' allows init without needing 
+        # access to the remote state or provider APIs.
+
+      - name: Terraform Validate
+        run: terraform validate
+        # Verification: This catches your 'uk-' naming convention errors 
+        # and syntax mistakes BEFORE you even try to deploy.
+
+      - name: Security Scan (tfsec)
+        uses: aquasecurity/tfsec-action@v1.0.0
+        # Verification: Checks for hardcoded secrets or open CIDR blocks.
