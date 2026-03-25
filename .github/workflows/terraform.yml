@@ -23,10 +23,6 @@ jobs:
             "pf_base_url": "https://localhost:9999"
           }' > terraform.tfvars.json
 
-      - name: Terraform Plan
-        # -input=false prevents the "Hanging" behavior
-        run: terraform plan -refresh=false -input=false
-
       - name: Terraform Init
         run: terraform init -input=false
 
