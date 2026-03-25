@@ -15,7 +15,7 @@ jobs:
       - name: Verify Secrets Exist
         shell: bash
         run: |
-          if [ -z "${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}" ]; then
+          if [ -z "${{ secrets.CLIENT_CREDENTIALS_SECRET }}" ]; then
             echo "❌ ERROR: CLIENT_CREDENTIALS_CLIENT_SECRET is MISSING in GitHub Secrets UI"
             exit 1
           else
