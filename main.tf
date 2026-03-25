@@ -16,8 +16,9 @@ output "hybrid_status_report" {
 
 module "cc_iam_vending_machine" {
   source   = "./modules/iam-vending-machine"
-  p1_env_id              = var.pingone_environment_id
+  p1_env_id            = var.pingone_environment_id
   cc_client_secret     = var.client_credentials_client_secret
+  
 
   app_names = {
     "uk-chatbot-prod" = {
