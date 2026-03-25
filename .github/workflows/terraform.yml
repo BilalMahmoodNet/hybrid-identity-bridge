@@ -19,44 +19,17 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -input=false
-
-      - name: Inject Secrets
-        # 2. We map GitHub Secrets to Shell Variables for the echo command
-        env:
-          P1_ID: ${{ secrets.PINGONE_CLIENT_ID }}
-          P1_SECRET: ${{ secrets.PINGONE_CLIENT_SECRET }}
-          P1_ENV: ${{ secrets.PINGONE_ENVIRONMENT_ID }}
-          PF_PASS: ${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}
-          CC_SECRET: ${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}
-        run: |
-          cat <<EOF > terraform.tfvars.json
-          {
-            "pingone_client_id": "$P1_ID",
-            "pingone_client_secret": "$P1_SECRET",
-            "pingone_environment_id": "$P1_ENV",
-            "pingfederate_admin_password": "$PF_PASS",
-            "client_credentials_client_secret": "$CC_SECRET",
-            "pf_base_url": "https://localhost:9999"
-          }
-          EOF
-
-      - name: Verify File Creation
-        run: |
-          ls -la ./terraform.tfvars.json
-          # This counts the characters in the file. 
-          # If it's less than 100 bytes, your secrets are empty.
-          wc -c ./terraform.tfvars.json
           
       - name: Terraform Plan
         # We bypass the JSON file entirely. This is the most robust CI/CD method.
         env:
           PINGONE_REGION_CODE: "EU"
           # Direct injection from the GitHub Secret Store to Terraform
-          TF_VAR_pingone_client_id: ${{ secrets.PINGONE_CLIENT_ID }}
-          TF_VAR_pingone_client_secret: ${{ secrets.PINGONE_CLIENT_SECRET }}
-          TF_VAR_pingone_environment_id: ${{ secrets.PINGONE_ENVIRONMENT_ID }}
-          TF_VAR_pingfederate_admin_password: ${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}
-          TF_VAR_client_credentials_client_secret: ${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}
+          TF_VAR_pingone_client_id: "${{ secrets.PINGONE_CLIENT_ID }}"
+          TF_VAR_pingone_client_secret: "${{ secrets.PINGONE_CLIENT_SECRET }}"
+          TF_VAR_pingone_environment_id: "${{ secrets.PINGONE_ENVIRONMENT_ID }}"
+          TF_VAR_pingfederate_admin_password: "${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}"
+          TF_VAR_client_credentials_client_secret: "${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}"
         run: |
           terraform plan \
             -refresh=false \
