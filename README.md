@@ -1,41 +1,48 @@
-## 🛠️ Project Roadmap: The Migration Lifecycle
-
-## 🤖 CI/CD & Automated Governance
-This framework is integrated with **GitHub Actions** to ensure that every Identity change is validated, linted, and scanned before it reaches the environment.
-
-* **Static Analysis (SAST):** Automated `terraform validate` and `fmt` checks on every Pull Request to ensure HCL compliance.
-* **Security Shift-Left:** (Roadmap) Integration with `tfsec` or `Checkov` to detect over-privileged IAM roles or exposed secrets before deployment.
-* **Plan Transparency:** Automated generation of `terraform plan` output in PR comments, providing a clear audit trail for Identity Admins.
+# 🤖 Multi-Cloud Identity Vending Machine
+**Architecting Automated OAuth Lifecycle Management across SaaS (PingOne) and On-Prem (PingFederate)**
 
 ---
 
-### ✅ Phase 1: The Hybrid Bridge (Completed)
-* **Infrastructure as Code (IaC):** Orchestrated dual-provider states (PingFederate & PingOne).
-* **Identity Vending Factory:** Leveraged `for_each` and dynamic blocks for scalable provisioning.
-* **Policy-as-Code:** Implemented variable validation for UK naming standards and secret entropy.
-* **CI/CD Foundation:** Established **GitHub Actions** workflows for automated code quality and validation.
+## 🏛️ Architectural Overview
+This framework automates the "Identity Bridge" bottleneck. It provides a standardized, **Policy-as-Code** approach to vending OAuth clients and machine identities across hybrid environments. 
 
-### 🚀 Phase 2: The Migration Cutover (In Progress)
-* **Boolean Cutover Logic:** `is_migrated` flag to trigger automated decommissioning and cloud-native re-provisioning.
-* **Secret Management:** Integration with **HashiCorp Vault** or AWS Secrets Manager for zero-touch credential injection.
-* **Self-Hosted Runners:** Configuring GitHub Runners within the private network to reach on-premises Dockerized PingFederate APIs safely.
+By leveraging **Terraform** and **GitHub Actions**, this project eliminates manual configuration drift and enforces security guardrails at the PR level.
 
-
----
-
-## 🚀 The "Principal Architect" Demo
-To demonstrate the power of this framework, a single change in the `app_names` configuration triggers a multi-provider transaction:
-
-1.  **Validation:** Terraform confirms the `client_id` follows UK Governance standards.
-2.  **On-Prem:** A new OAuth Client is provisioned in the local PingFederate instance.
-3.  **Cloud:** A mirrored Security Group is created in PingOne with a timestamped "Migration Bridge" tag.
-4.  **Governance:** The new Cloud Group is automatically assigned administrative roles within its environment.
+### 🤖 CI/CD & Automated Governance
+* **Zero-Artifact Injection:** Uses `TF_VAR_` environment mapping to inject secrets directly into process memory, bypassing insecure disk-based `.tfvars` files.
+* **Static Analysis:** Mandatory `terraform validate` and `fmt` checks integrated into the CI pipeline.
+* **Plan Transparency:** Automated execution plans generated on every Pull Request for architectural review.
+* **Identity Scoping:** Leverages GitHub Environments (`DEV`/`PROD`) for strict credential separation.
 
 ---
 
-## 📈 Impact
-This framework reduces the time to onboard and bridge a new application from **hours of manual GUI configuration** to **seconds of automated HCL execution**, ensuring zero configuration drift across the hybrid identity estate.
+## ✅ Phase 1: The Hybrid Bridge (Completed)
+* **Dual-Provider Orchestration:** Unified state management for **PingFederate** (On-Prem) and **PingOne** (SaaS).
+* **Scalable Vending:** Utilizes `for_each` and dynamic blocks to provision diverse client types (Chatbots, Web Portals, Machine-to-Machine).
+* **Naming Standards:** Enforces UK-standardized naming conventions and entropy requirements via HCL validation rules.
+* **CI/CD Foundation:** Established the "Setup-Init-Plan" workflow for ephemeral GitHub Runners.
+
+## 🚀 Phase 2: Migration & Lifecycle (In Progress)
+* **Boolean Cutover Logic:** Implementation of `is_migrated` flags to trigger automated decommissioning of legacy clients during cloud migration.
+* **Secrets Orchestration:** Integration with **HashiCorp Vault** for dynamic, short-lived credential rotation.
+* **Private Networking:** Configuring **Self-Hosted Runners** to bridge the gap between GitHub Cloud and private-network PingFederate APIs.
 
 ---
+
+## 🔑 Prerequisites for Deployment
+To run this in your own GitHub Action, configure the following **Environment Secrets**:
+| Name | Scope | Description |
+| :--- | :--- | :--- |
+| `PINGONE_CLIENT_ID` | Variable | Worker App ID for PingOne API access. |
+| `PINGONE_CLIENT_SECRET` | Secret | Worker App Secret (Sensitive). |
+| `PINGONE_ENVIRONMENT_ID` | Variable | Target PingOne Environment UUID. |
+| `PINGFEDERATE_ADMIN_PASSWORD`| Secret | Admin password for the PF Admin API. |
+| `CLIENT_CREDENTIALS_SECRET`  | Secret | The secret to be vended to the OAuth clients. |
+
+---
+
+### 🛡️ Security Disclaimer
+This repository follows **Zero-Trust** principles. No sensitive credentials or state files are committed to version control. All secrets are managed via GitHub encrypted storage and injected at runtime.
+
 **Author:** Bilal Mahmood  
 *Identity Architect*
