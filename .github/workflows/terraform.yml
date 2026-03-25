@@ -5,24 +5,23 @@ on: [push, pull_request]
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
-    # 1. CRITICAL: Match this to your GitHub Environment Name (e.g., 'dev' or 'prod')
+    # 1. CRITICAL: This MUST match the name in Settings > Environments
     environment: dev 
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # THIS IS THE MISSING ENGINE
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.7.0" # Lock the version for stability
+          terraform_version: "1.7.0"
 
       - name: Terraform Init
         run: terraform init -input=false
-        
-      - name: Inject Secrets to TFVARS
-        # 2. We use 'env' to make them available to the shell script
+
+      - name: Inject Secrets
+        # 2. We map GitHub Secrets to Shell Variables for the echo command
         env:
           P1_ID: ${{ secrets.PINGONE_CLIENT_ID }}
           P1_SECRET: ${{ secrets.PINGONE_CLIENT_SECRET }}
@@ -40,7 +39,7 @@ jobs:
           }" > terraform.tfvars.json
 
       - name: Terraform Plan
-        # 3. Force the Region via Environment Variable (The SDK bypass)
+        # 3. Force the Region SDK bypass
         env:
           PINGONE_REGION_CODE: "EU"
         run: terraform plan -var-file="terraform.tfvars.json" -refresh=false -input=false
