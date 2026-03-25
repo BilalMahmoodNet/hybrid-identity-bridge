@@ -8,3 +8,17 @@ variable "client_credentials_client_secret" {
     type        = string
     sensitive   = true
 }  
+
+variable "pingfederate_admin_password" {
+  description = "Admin password for PingFederate API access"
+  type        = string
+  sensitive   = true
+}
+
+
+variable "pingone_client_id" {}
+variable "pingone_client_secret" {}
+variable "pingone_environment_id" {}
+variable "client_credentials_client_secret" {}
+variable "pf_base_url" { default = "https://localhost:9999" }
+
