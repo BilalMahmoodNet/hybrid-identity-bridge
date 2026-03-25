@@ -13,17 +13,16 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Inject Secrets to TFVARS
-        # This creates the JSON file that Terraform loads AUTOMATICALLY
         run: |
           echo '{
             "pingone_client_id": "${{ secrets.PINGONE_CLIENT_ID }}",
-            "pingone_client_secret": "${{ secrets.PINGONE_CLIENT_SECRET }}",
+            "client_credentials_client_secret": "${{ secrets.PINGONE_CLIENT_SECRET }}",
             "pingone_environment_id": "${{ secrets.PINGONE_ENVIRONMENT_ID }}",
             "pf_base_url": "https://mock-internal-pf:9999"
           }' > terraform.tfvars.json
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Terraform Validate
         run: terraform validate
