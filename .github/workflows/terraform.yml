@@ -35,5 +35,13 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        # We explicitly tell Terraform to use the file we just verified with JQ
-        run: terraform plan -var-file="terraform.tfvars.json" -refresh=false -input=false
+        env:
+          # This is the "Magic Bullet" for the PingOne Provider in CI/CD
+          # It bypasses the HCL validation and feeds the SDK directly
+          PINGONE_REGION_CODE: "EU" 
+          TF_VAR_pingone_region_code: "EU"
+        run: |
+          terraform plan \
+            -var-file="terraform.tfvars.json" \
+            -refresh=false \
+            -input=false
