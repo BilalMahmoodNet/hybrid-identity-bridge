@@ -23,7 +23,7 @@ variable "client_credentials_client_secret" {
 
 variable "pf_base_url" {
   type    = string
-  default = "https://192.168.0.73:9999"
+  default = "https://127.0.0.1:9999"
 }
 
 variable "pf_admin_client_id" {

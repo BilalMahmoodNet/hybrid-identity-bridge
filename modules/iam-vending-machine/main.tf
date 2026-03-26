@@ -1,20 +1,29 @@
 # This resource creates a OAuth Client in PingFederate for each entry in the app_names variable, using the provided client_id and secret
 
 resource "pingfederate_oauth_client" "vended_client" {
-  # FILTER: Only create in PingFed if is_hybrid is true
-  for_each = { for k, v in var.iam_clients : k => v if v.is_hybrid }
+
+  for_each = {
+   for k, v in var.iam_clients : k => v if v.is_hybrid
+  }
 
   client_id = each.value.client_id
   name      = each.value.name
   enabled   = true
-  grant_types = each.value.grant_types
-  redirect_uris = length(each.value.redirect_uris) > 0 ? each.value.redirect_uris : ["https://localhost"]
-  client_auth = {
-    type   = "SECRET"
-    secret = each.value.secret
-  }
+  grant_types   = ["AUTHORIZATION_CODE", "REFRESH_TOKEN"]
+
+ # client_auth = {
+#    type   = "SECRET"
+#    secret = each.value.secret
+#  }
+
   
+redirect_uris = each.value.redirect_uris
+  
+  # Security defaults for Hybrid clients
+#  require_proof_key_for_code_exchange = true
 }
+
+
 
 
 resource "pingone_application" "vended_apps" {
