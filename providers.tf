@@ -12,6 +12,17 @@ terraform {
   }
 }
 
+terraform {
+  backend "remote" {
+    # 1. Using a free account at app.terraform.io
+    hostname     = "app.terraform.io"
+    organization = "bilalmahmoodnet"
+
+    workspaces {
+      name = "iam-vending-machine-dev"
+    }
+  }
+}
 provider "pingone" {
   client_id      = var.pingone_client_id
   client_secret  = var.pingone_client_secret
