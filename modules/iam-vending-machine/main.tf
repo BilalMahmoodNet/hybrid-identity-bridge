@@ -3,15 +3,17 @@
 resource "pingfederate_oauth_client" "vended_client" {
   # FILTER: Only create in PingFed if is_hybrid is true
   for_each = { for k, v in var.iam_clients : k => v if v.is_hybrid }
+
   client_id = each.value.client_id
   name      = each.value.name
   enabled   = true
   grant_types = each.value.grant_types
-  redirect_uris  = length(each.value.redirect_uris) > 0 ? each.value.redirect_uris : null
+  redirect_uris = length(each.value.redirect_uris) > 0 ? each.value.redirect_uris : ["https://localhost"]
   client_auth = {
     type   = "SECRET"
     secret = each.value.secret
   }
+  
 }
 
 
@@ -34,6 +36,8 @@ resource "pingone_application" "vended_apps" {
     # Ensure this is a list(string) from your map
     # oidc_scopes = each.value.oauth_scopes
   }
+
+  
 }
 
 

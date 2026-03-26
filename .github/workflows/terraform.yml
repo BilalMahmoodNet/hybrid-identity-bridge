@@ -16,6 +16,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.0"
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
 
       - name: Terraform Init
         run: terraform init -input=false
@@ -30,6 +31,11 @@ jobs:
           TF_VAR_pingone_environment_id: "${{ vars.PINGONE_ENVIRONMENT_ID }}"
           TF_VAR_pingfederate_admin_password: "${{ secrets.PINGFEDERATE_ADMIN_PASSWORD }}"
           TF_VAR_client_credentials_client_secret: "${{ secrets.CLIENT_CREDENTIALS_CLIENT_SECRET }}"
+          TF_VAR_pf_admin_client_id: "${{ vars.PF_ADMIN_CLIENT_ID }}"
+          TF_VAR_pf_admin_client_secret: "${{ secrets.PF_ADMIN_CLIENT_SECRET }}"
+          TF_VAR_token_url: "${{ vars.TOKEN_URL }}"
+          TF_VAR_pf_base_url: "${{ vars.PF_BASE_URL }}"
+
         run: |
           terraform plan \
             -refresh=false \

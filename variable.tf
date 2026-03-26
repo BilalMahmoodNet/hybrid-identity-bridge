@@ -23,5 +23,28 @@ variable "client_credentials_client_secret" {
 
 variable "pf_base_url" {
   type    = string
-  default = "https://localhost:9999"
+  default = "https://192.168.0.73:9999"
+}
+
+variable "pf_admin_client_id" {
+  type = string
+}
+
+variable "pf_admin_client_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "token_url" {
+  type = string
+}
+
+variable "pf_version" {
+  type    = string
+  default = "13.0"
+}
+
+variable "pingone_region" {  
+  type    = string
+  default = "EU"
 }
