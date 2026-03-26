@@ -1,6 +1,8 @@
 # This resource creates a OAuth Client in PingFederate for each entry in the app_names variable, using the provided client_id and secret
+
 resource "pingfederate_oauth_client" "vended_client" {
-  for_each  = var.iam_clients
+  # FILTER: Only create in PingFed if is_hybrid is true
+  for_each = { for k, v in var.iam_clients : k => v if v.is_hybrid }
   client_id = each.value.client_id
   name      = each.value.name
   enabled   = true
@@ -14,9 +16,7 @@ resource "pingfederate_oauth_client" "vended_client" {
 
 
 resource "pingone_application" "vended_apps" {
-  
-  for_each = { for k, v in var.iam_clients : k => v if v.is_hybrid }
-
+  for_each = var.iam_clients
   environment_id = var.p1_env_id
   name           = each.value.name
   description =  each.value.description
@@ -27,8 +27,9 @@ resource "pingone_application" "vended_apps" {
     # Directly use your ternary logic here
     type                       = each.value.type
     grant_types                = each.value.type == "WORKER" ? ["CLIENT_CREDENTIALS"] : ["AUTHORIZATION_CODE"]
+    token_endpoint_auth_method = each.value.type == "WORKER" ? "CLIENT_SECRET_BASIC" : "NONE"
     response_types             = each.value.type == "WORKER" ? null : ["CODE"]
-    token_endpoint_auth_method = "NONE"
+
     
     # Ensure this is a list(string) from your map
     # oidc_scopes = each.value.oauth_scopes
@@ -42,11 +43,10 @@ resource "pingone_group" "cc_group" {
   environment_id = var.p1_env_id
 
   for_each    = var.iam_clients
-  name        = pingfederate_oauth_client.vended_client[each.key].name
-  description = each.value.description
-
+  name        = "Group-for-${each.value.name}"
+  description = "IAM Vending Group for ${each.value.name}"
   custom_data = jsonencode({
-    "client_id" = pingfederate_oauth_client.vended_client[each.key].client_id
+    client_id = each.value.client_id
   })
 
   lifecycle {
