@@ -49,6 +49,8 @@ variable "pingone_region" {
   default = "EU"
 }
 
-variable "adapter_password" {
-  
+variable "adapter_password" { 
+  type      = string
+  sensitive = true
+
 }
