@@ -34,63 +34,51 @@ resource "pingfederate_sp_adapter" "vending_machine_adapter" {
   }
 }
 
+
 resource "pingfederate_sp_idp_connection" "p1_connection" {
-  count     = anytrue([for client in var.iam_clients : client.is_hybrid]) ? 1 : 0
-  
+  count = length(pingone_application.idp_apps) > 0 ? 1 : 0
+
   name      = "PingOne-Hybrid-Bridge"
-  entity_id = "https://auth.pingone.eu/${var.p1_env_id}/as"
+  entity_id = local.p1_issuer
   active    = true
 
   oidc_client_credentials = {
-    client_id = var.pingone_client_id
-    client_secret = var.pingone_client_secret
+    client_id = values(pingone_application.idp_apps)[0].id
+    client_secret = var.pingone_client_secret 
   }
 
   idp_browser_sso = {
+    # REQUIRED SCHEMA FIELDS: The "Principal" fix
     protocol             = "OIDC"
     idp_identity_mapping = "ACCOUNT_MAPPING"
 
-    oidc_provider_settings = {
-      authorization_endpoint = "https://auth.pingone.eu/${var.p1_env_id}/as/authorize"
-      jwks_url               = "https://auth.pingone.eu/${var.p1_env_id}/as/jwks"
-      login_type             = "POST" 
-      
-      # REFACTORED: Scopes provided as a comma-separated string
+   oidc_provider_settings = {
+      client_id = values(pingone_application.idp_apps)[0].id
+      client_secret = var.pingone_client_secret 
+      authorization_endpoint = "${local.p1_issuer}/authorize"
+      jwks_url               = "${local.p1_issuer}/jwks"
       scopes                 = "openid profile email"
+      login_type             = "POST"
     }
 
-    attribute_contract = {
-    extended_attributes = [
-      { name = "given_name" },
-      { name = "family_name" },
-      { name = "email" }
-    ]
-  }
 
-    adapter_mappings = [
-      {
-        sp_adapter_ref = {
-          id = "vend1" 
-        }
-        attribute_contract_fulfillment = {
-          "firstName" = {
-            source = { type = "CLAIMS" }
-            value  = "given_name"
-          }
-          "lastName" = {
-            source = { type = "CLAIMS" }
-            value  = "family_name"
-          }
-          "email" = {
-            source = { type = "CLAIMS" }
-            value  = "email"
-          }
-          "subject" = {
-            source = { type = "CLAIMS" }
-            value  = "sub"
-          }
-        }
+
+    attribute_contract = {
+      extended_attributes = [
+        { name = "given_name" }, 
+        { name = "family_name" }, 
+        { name = "email" }
+      ]
+    }
+
+    adapter_mappings = [{
+      sp_adapter_ref = { id = "vend1" }
+      attribute_contract_fulfillment = {
+        "firstName" = { source = { type = "CLAIMS" }, value = "given_name" }
+        "lastName"  = { source = { type = "CLAIMS" }, value = "family_name" }
+        "email"     = { source = { type = "CLAIMS" }, value = "email" }
+        "subject"   = { source = { type = "CLAIMS" }, value = "sub" }
       }
-    ]
+    }]
   }
 }
