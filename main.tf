@@ -17,7 +17,9 @@ output "hybrid_status_report" {
 module "cc_iam_vending_machine" {
   source   = "./modules/iam-vending-machine"
   p1_env_id            = var.pingone_environment_id
-  cc_client_secret     = var.client_credentials_client_secret  
+  cc_client_secret     = var.client_credentials_client_secret
+  pingone_client_id = var.pingone_client_id
+  pingone_client_secret = var.pingone_client_secret
 }
 
 output "vending_machine_group_id" {

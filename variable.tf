@@ -1,10 +1,10 @@
+variable "pingone_client_id" {
+  type = string
+}
+
 variable "pingone_client_secret" {
   type      = string
   sensitive = true
-}
-
-variable "pingone_client_id" {
-  type = string
 }
 
 variable "pingone_environment_id" {
