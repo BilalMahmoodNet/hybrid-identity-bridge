@@ -48,3 +48,7 @@ variable "pingone_region" {
   type    = string
   default = "EU"
 }
+
+variable "adapter_password" {
+  
+}

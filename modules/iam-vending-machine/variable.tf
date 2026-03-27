@@ -23,3 +23,11 @@ variable "pingone_client_secret" {
   sensitive   = true
   # Provided by root module when calling this module
 }
+
+variable "adapter_password" { 
+  description = "Password for the PingFederate Adapter instance used in the IdP Connection"
+  type        = string
+  sensitive   = true
+  # Provided by root module when calling this module
+  
+}

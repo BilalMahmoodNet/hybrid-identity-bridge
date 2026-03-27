@@ -10,8 +10,8 @@ resource "pingfederate_sp_adapter" "vending_machine_adapter" {
 
   configuration = {
     sensitive_fields = [
-      { name = "Password", value = "Password123!" },
-      { name = "Confirm Password", value = "Password123!" }
+      { name = "Password", value = var.adapter_password },
+      { name = "Confirm Password", value = var.adapter_password }
     ]
     fields = [
       { name = "Transport Mode", value = "1" },      

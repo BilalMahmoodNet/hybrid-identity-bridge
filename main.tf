@@ -20,6 +20,8 @@ module "cc_iam_vending_machine" {
   cc_client_secret     = var.client_credentials_client_secret
   pingone_client_id = var.pingone_client_id
   pingone_client_secret = var.pingone_client_secret
+  adapter_password = var.adapter_password
+
 }
 
 output "vending_machine_group_id" {
