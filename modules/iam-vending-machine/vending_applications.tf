@@ -1,8 +1,17 @@
 locals {
+  # PingFederate escapes / as \/ in the JSON before encoding.
+  # We use a double-backslash in HCL to escape the escape.
   p1_issuer = "https://auth.pingone.eu/${var.p1_env_id}/as"
-  encoded_callback_path = base64encode(jsonencode({ "iss" = local.p1_issuer }))
-  vending_machine_redirect_uri = "https://localhost:9031/sp/${local.encoded_callback_path}/cb.openid"
-  idp_app_ref = one(values(pingone_application.idp_apps))
+  escaped_issuer = replace(local.p1_issuer, "/", "\\/")
+
+  # 2. THE JSON PAYLOAD:
+  # We manually build the JSON string to ensure no extra spaces and preserved escapes.
+  json_payload = "{\"iss\":\"${local.escaped_issuer}\"}"
+
+  raw_base64 = base64encode(local.json_payload)
+  
+  encoded_iss = trim(local.raw_base64, "=")
+  vending_machine_redirect_uri = "https://localhost:9031/sp/${local.encoded_iss}/cb.openid"
 }
 
 # Resource to create OAuth Clients (in pingfederate) based on clients.tf definition and if "is_hybrid" is true
@@ -61,7 +70,14 @@ resource "pingone_application" "idp_apps" {
   }
 }
 
+resource "pingone_application_flow_policy_assignment" "authentication_davinci_flow_policy_assignment" {
+  for_each = pingone_application.idp_apps
+  environment_id = var.p1_env_id
+  application_id = each.value.id
 
+  flow_policy_id = "283eb96818a295d776607b47d5a04ac5"
 
+  priority = 1
+}
 
 

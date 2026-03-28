@@ -51,6 +51,8 @@ resource "pingfederate_sp_idp_connection" "p1_connection" {
     # REQUIRED SCHEMA FIELDS: The "Principal" fix
     protocol             = "OIDC"
     idp_identity_mapping = "ACCOUNT_MAPPING"
+    default_target_url    = "https://localhost:9031/idp/userinfo.openid"
+
 
    oidc_provider_settings = {
       client_id = values(pingone_application.idp_apps)[0].id
