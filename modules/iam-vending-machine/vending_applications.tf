@@ -10,7 +10,13 @@ locals {
 
   raw_base64 = base64encode(local.json_payload)
   
-  encoded_iss = trim(local.raw_base64, "=")
+  encoded_iss = trim(
+    replace(
+      replace(base64encode(local.json_payload), "+", "-"), 
+      "/", "_"
+    ), 
+    "="
+  )
   vending_machine_redirect_uri = "https://localhost:9031/sp/${local.encoded_iss}/cb.openid"
 }
 

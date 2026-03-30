@@ -41,7 +41,6 @@ variable "token_url" {
 
 variable "pf_version" {
   type    = string
-  default = "13.0"
 }
 
 variable "pingone_region" {  

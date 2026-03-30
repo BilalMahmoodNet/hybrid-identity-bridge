@@ -7,7 +7,11 @@ terraform {
     }
     pingfederate = {
       source  = "pingidentity/pingfederate"
-      version = "~> 1.7"
+      version = "~> 1.7.0"
+    }
+    terracurl = {
+      source  = "devops-rob/terracurl"
+      version = "2.2.0"
     }
   }
 }

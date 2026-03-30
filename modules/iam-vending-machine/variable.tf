@@ -28,6 +28,28 @@ variable "adapter_password" {
   description = "Password for the PingFederate Adapter instance used in the IdP Connection"
   type        = string
   sensitive   = true
-  # Provided by root module when calling this module
+  # Provided by root module when calling this module 
+}
+
+variable "pf_admin_host" {
+  description = "PingFederate admin host"
+  type        = string
+}
+
+variable "pf_user" {
+  description = "PingFederate admin username"
+  type        = string
+}
+
+variable "pf_pass" {
+  description = "PingFederate admin password"
+  type        = string
+  sensitive   = true
+}
+
+variable "pingfederate_admin_password" {
+  description = "Password for the PingFederate Admin user (if different from pf_pass)"
+  type        = string
+  sensitive   = true
   
 }

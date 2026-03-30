@@ -21,6 +21,11 @@ module "cc_iam_vending_machine" {
   pingone_client_id = var.pingone_client_id
   pingone_client_secret = var.pingone_client_secret
   adapter_password = var.adapter_password
+  pf_admin_host = var.pf_base_url
+  pf_user = var.pf_admin_client_id
+  pf_pass = var.pf_admin_client_secret
+  pingfederate_admin_password = var.pingfederate_admin_password
+  
 
 }
 

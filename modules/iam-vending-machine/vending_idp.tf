@@ -84,3 +84,15 @@ resource "pingfederate_sp_idp_connection" "p1_connection" {
     }]
   }
 }
+
+resource "pingfederate_authentication_policy_contract" "PingOne_policy_contract" {
+  name = "P1_IDP_Contract"
+  
+  # Attributes we want to carry across the Hub
+  extended_attributes = [
+    { name = "email" },
+    { name = "given_name" },
+    { name = "family_name" }
+  ]
+}
+
